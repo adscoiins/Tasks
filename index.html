@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tasks Page</title>
-    <!-- Include Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -28,8 +27,8 @@
             flex-direction: column;
             gap: 15px;
             margin: 20px;
-            overflow-y: auto; /* Allow scrolling for tasks */
-            padding-bottom: 60px; /* Space for footer */
+            overflow-y: auto;
+            padding-bottom: 60px;
         }
         .task {
             background-color: #0088cc;
@@ -53,9 +52,9 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            position: fixed; /* Fix footer to the bottom */
-            bottom: 0; /* Position it at the bottom */
-            width: 100%; /* Full width */
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
         footer a {
             color: white;
@@ -72,6 +71,50 @@
         footer a:hover {
             text-decoration: underline;
         }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .popup.active {
+            display: block;
+        }
+        .popup p {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .popup button {
+            margin-top: 15px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .popup button:hover {
+            background-color: #0077b3;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -79,25 +122,25 @@
     <div class="header">Tasks Page</div>
 
     <div class="task-container">
-        <div class="task" onclick="completeTask(1000, this)">
+        <div class="task" onclick="completeTask(1000, 'https://t.me/your_channel_1')">
             <i class="fas fa-check-circle"></i> Follow the latest Bitcoin trends (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(2000, this)">
+        <div class="task" onclick="completeTask(2000, 'https://t.me/your_channel_2')">
             <i class="fas fa-check-circle"></i> Research Ethereum technology (+2000 Points)
         </div>
-        <div class="task" onclick="completeTask(3000, this)">
+        <div class="task" onclick="completeTask(3000, 'https://t.me/your_channel_3')">
             <i class="fas fa-check-circle"></i> Join a cryptocurrency community (+3000 Points)
         </div>
-        <div class="task" onclick="completeTask(1500, this)">
+        <div class="task" onclick="completeTask(1500, 'https://t.me/your_channel_4')">
             <i class="fas fa-check-circle"></i> Read about Ripple and its use cases (+1500 Points)
         </div>
-        <div class="task" onclick="completeTask(2500, this)">
+        <div class="task" onclick="completeTask(2500, 'https://t.me/your_channel_5')">
             <i class="fas fa-check-circle"></i> Explore the benefits of Litecoin (+2500 Points)
         </div>
-        <div class="task" onclick="completeTask(1800, this)">
+        <div class="task" onclick="completeTask(1800, 'https://t.me/your_channel_6')">
             <i class="fas fa-check-circle"></i> Watch a video on blockchain technology (+1800 Points)
         </div>
-        <div class="task" onclick="completeTask(2200, this)">
+        <div class="task" onclick="completeTask(2200, 'https://t.me/your_channel_7')">
             <i class="fas fa-check-circle"></i> Analyze the latest DeFi projects (+2200 Points)
         </div>
     </div>
@@ -121,19 +164,51 @@
         </a>
     </footer>
 
+    <div class="popup" id="popup">
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <div class="popup" id="completed-popup">
+        <p id="completed-message"></p>
+        <button onclick="closeCompletedPopup()">Close</button>
+    </div>
+
     <script>
-        function completeTask(points, element) {
+        function completeTask(points, channelLink) {
+            const taskKey = `task_completed_${channelLink}`;
+            if (localStorage.getItem(taskKey)) {
+                const completedPopup = document.getElementById('completed-popup');
+                const completedMessage = document.getElementById('completed-message');
+                completedMessage.innerText = `You have already completed this task.`;
+                completedPopup.classList.add('active');
+                return;
+            }
+
+            localStorage.setItem(taskKey, 'true');
+
             let totalPoints = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
             totalPoints += points;
             localStorage.setItem('points', totalPoints);
-            alert(`You have earned ${points} points! You now have ${totalPoints.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} points.`);
+            document.getElementById('popup-message').innerText = `You have earned ${points} points! You now have ${totalPoints.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} points.`;
+            window.open(channelLink, '_blank');
 
-            // Remove active class from all tasks
             const tasks = document.querySelectorAll('.task');
             tasks.forEach(task => task.classList.remove('active'));
+            const clickedTask = Array.from(tasks).find(task => task.onclick.toString().includes(points));
+            clickedTask.classList.add('active');
 
-            // Add active class to the clicked task
-            element.classList.add('active');
+            setTimeout(() => {
+                document.getElementById('popup').classList.add('active');
+            }, 10000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup').classList.remove('active');
+        }
+
+        function closeCompletedPopup() {
+            document.getElementById('completed-popup').classList.remove('active');
         }
     </script>
 
