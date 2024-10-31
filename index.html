@@ -122,26 +122,26 @@
     <div class="header">Tasks Page</div>
 
     <div class="task-container">
-        <div class="task" onclick="completeTask(1000, 'https://t.me/your_channel_1')">
+        <div class="task" onclick="completeTask('https://t.me/your_channel_1')">
             <i class="fas fa-check-circle"></i> Follow the latest Bitcoin trends (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(2000, 'https://t.me/your_channel_2')">
-            <i class="fas fa-check-circle"></i> Research Ethereum technology (+2000 Points)
+        <div class="task" onclick="completeTask('https://t.me/your_channel_2')">
+            <i class="fas fa-check-circle"></i> Research Ethereum technology (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(3000, 'https://t.me/your_channel_3')">
-            <i class="fas fa-check-circle"></i> Join a cryptocurrency community (+3000 Points)
+        <div class="task" onclick="completeTask('https://t.me/your_channel_3')">
+            <i class="fas fa-check-circle"></i> Join a cryptocurrency community (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(1500, 'https://t.me/your_channel_4')">
-            <i class="fas fa-check-circle"></i> Read about Ripple and its use cases (+1500 Points)
+        <div class="task" onclick="completeTask('https://t.me/your_channel_4')">
+            <i class="fas fa-check-circle"></i> Read about Ripple and its use cases (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(2500, 'https://t.me/your_channel_5')">
-            <i class="fas fa-check-circle"></i> Explore the benefits of Litecoin (+2500 Points)
+        <div class="task" onclick="completeTask('https://t.me/your_channel_5')">
+            <i class="fas fa-check-circle"></i> Explore the benefits of Litecoin (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(1800, 'https://t.me/your_channel_6')">
-            <i class="fas fa-check-circle"></i> Watch a video on blockchain technology (+1800 Points)
+        <div class="task" onclick="completeTask('https://t.me/your_channel_6')">
+            <i class="fas fa-check-circle"></i> Watch a video on blockchain technology (+1000 Points)
         </div>
-        <div class="task" onclick="completeTask(2200, 'https://t.me/your_channel_7')">
-            <i class="fas fa-check-circle"></i> Analyze the latest DeFi projects (+2200 Points)
+        <div class="task" onclick="completeTask('https://t.me/your_channel_7')">
+            <i class="fas fa-check-circle"></i> Analyze the latest DeFi projects (+1000 Points)
         </div>
     </div>
 
@@ -175,7 +175,10 @@
     </div>
 
     <script>
-        function completeTask(points, channelLink) {
+        // حذف بيانات المستخدمين السابقين
+        localStorage.clear();
+
+        function completeTask(channelLink) {
             const taskKey = `task_completed_${channelLink}`;
             if (localStorage.getItem(taskKey)) {
                 const completedPopup = document.getElementById('completed-popup');
@@ -188,18 +191,15 @@
             localStorage.setItem(taskKey, 'true');
 
             let totalPoints = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
-            totalPoints += points;
+            totalPoints += 1000; // كل مهمة تمنح 1000 نقطة
             localStorage.setItem('points', totalPoints);
 
-            // أرسل النقاط المكتسبة إلى Home
-            localStorage.setItem('earned_points', points); // تخزين النقاط المكتسبة في localStorage
-
-            document.getElementById('popup-message').innerText = `You have earned ${points} points! You now have ${totalPoints.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} points.`;
+            document.getElementById('popup-message').innerText = `You have earned 1000 points! You now have ${totalPoints.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} points.`;
             window.open(channelLink, '_blank');
 
             const tasks = document.querySelectorAll('.task');
             tasks.forEach(task => task.classList.remove('active'));
-            const clickedTask = Array.from(tasks).find(task => task.onclick.toString().includes(points));
+            const clickedTask = Array.from(tasks).find(task => task.onclick.toString().includes(channelLink));
             clickedTask.classList.add('active');
 
             setTimeout(() => {
