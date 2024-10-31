@@ -31,7 +31,7 @@
             padding-bottom: 60px;
         }
         .task {
-            background-color: #ff8c00; /* تغيير اللون الأزرق إلى برتقالي */
+            background-color: #ff8c00;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
@@ -39,11 +39,11 @@
             transition: all 0.3s ease;
         }
         .task:hover {
-            background-color: #e07b00; /* لون أغمق عند التحويم */
+            background-color: #e07b00;
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.6);
         }
         .active {
-            background-color: #cc6b00; /* لون أغمق عند النشاط */
+            background-color: #cc6b00;
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.6);
         }
         footer {
@@ -95,7 +95,7 @@
         }
         .popup button {
             margin-top: 15px;
-            background-color: #ff8c00; /* تغيير اللون الأزرق إلى برتقالي */
+            background-color: #ff8c00;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -105,7 +105,7 @@
             transition: background-color 0.3s ease;
         }
         .popup button:hover {
-            background-color: #e07b00; /* لون أغمق عند التحويم */
+            background-color: #e07b00;
         }
         @keyframes fadeIn {
             from {
@@ -190,6 +190,10 @@
             let totalPoints = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
             totalPoints += points;
             localStorage.setItem('points', totalPoints);
+
+            // أرسل النقاط المكتسبة إلى Home
+            localStorage.setItem('earned_points', points); // تخزين النقاط المكتسبة في localStorage
+
             document.getElementById('popup-message').innerText = `You have earned ${points} points! You now have ${totalPoints.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} points.`;
             window.open(channelLink, '_blank');
 
