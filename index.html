@@ -41,8 +41,8 @@
             margin: 20px auto;
             max-width: 500px;
             padding: 0 10px;
-            flex-grow: 1; /* يجعله يأخذ المساحة المتبقية */
-            overflow-y: auto; /* يسمح بالتمرير إذا زادت العناصر */
+            flex-grow: 1;
+            overflow-y: auto;
         }
         .task {
             background-color: #333;
@@ -74,6 +74,39 @@
             transition: background-color 0.3s;
         }
         .complete-task:hover, .claim-task:hover {
+            background-color: #0077b3;
+        }
+        .disabled {
+            background-color: #4CAF50;
+            cursor: not-allowed;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+        .popup.active {
+            display: block;
+        }
+        .popup button {
+            background-color: #0088cc;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .popup button:hover {
             background-color: #0077b3;
         }
         footer {
@@ -121,7 +154,6 @@
             <span class="task-title">Subscribe to Channel 3</span>
             <button class="complete-task" onclick="startTask(this, 'https://t.me/exampleChannel3')">Complete Task</button>
         </div>
-        <!-- يمكن إضافة المزيد من المهام هنا -->
     </div>
 
     <footer>
@@ -142,6 +174,11 @@
             <span>Friends</span>
         </a>
     </footer>
+
+    <div class="popup" id="popup">
+        <p>You've earned points! Total points: <span id="totalPoints"></span></p>
+        <button onclick="closePopup()">OK</button>
+    </div>
 
     <script>
         let points = localStorage.getItem('userPoints') ? parseInt(localStorage.getItem('userPoints')) : 20000;
@@ -166,7 +203,7 @@
                 alert("Task already completed.");
                 button.textContent = "Completed";
                 button.disabled = true;
-                button.style.backgroundColor = "#4CAF50";
+                button.classList.add("disabled");
             }
         }
 
@@ -176,10 +213,19 @@
 
             button.textContent = "Completed";
             button.disabled = true;
-            button.style.backgroundColor = "#4CAF50";
+            button.classList.add("disabled");
 
             localStorage.setItem(`taskCompleted_${taskLink}`, "true");
-            alert("You've earned points! Total points: " + points);
+
+            // Show popup
+            const popup = document.getElementById("popup");
+            document.getElementById("totalPoints").textContent = points;
+            popup.classList.add("active");
+        }
+
+        function closePopup() {
+            const popup = document.getElementById("popup");
+            popup.classList.remove("active");
         }
     </script>
 </body>
