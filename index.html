@@ -71,50 +71,6 @@
         footer a:hover {
             text-decoration: underline;
         }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .popup.active {
-            display: block;
-        }
-        .popup p {
-            margin: 0;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-        .popup button {
-            margin-top: 15px;
-            background-color: #ff8c00;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        .popup button:hover {
-            background-color: #e07b00;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body>
@@ -164,55 +120,28 @@
         </a>
     </footer>
 
-    <div class="popup" id="popup">
-        <p id="popup-message"></p>
-        <button onclick="closePopup()">Close</button>
-    </div>
-
-    <div class="popup" id="completed-popup">
-        <p id="completed-message"></p>
-        <button onclick="closeCompletedPopup()">Close</button>
-    </div>
-
     <script>
-        // حذف بيانات المستخدمين السابقين
         localStorage.clear();
 
         function completeTask(channelLink) {
             const taskKey = `task_completed_${channelLink}`;
-            if (localStorage.getItem(taskKey)) {
-                const completedPopup = document.getElementById('completed-popup');
-                const completedMessage = document.getElementById('completed-message');
-                completedMessage.innerText = `You have already completed this task.`;
-                completedPopup.classList.add('active');
-                return;
-            }
+            if (localStorage.getItem(taskKey)) return;
 
             localStorage.setItem(taskKey, 'true');
 
             let totalPoints = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
-            totalPoints += 1000; // كل مهمة تمنح 1000 نقطة
+            totalPoints += 1000;
             localStorage.setItem('points', totalPoints);
 
-            document.getElementById('popup-message').innerText = `You have earned 1000 points! You now have ${totalPoints.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} points.`;
+            fetch('https://example.com/api/updatePoints', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ points: totalPoints })
+            });
+
             window.open(channelLink, '_blank');
-
-            const tasks = document.querySelectorAll('.task');
-            tasks.forEach(task => task.classList.remove('active'));
-            const clickedTask = Array.from(tasks).find(task => task.onclick.toString().includes(channelLink));
-            clickedTask.classList.add('active');
-
-            setTimeout(() => {
-                document.getElementById('popup').classList.add('active');
-            }, 10000);
-        }
-
-        function closePopup() {
-            document.getElementById('popup').classList.remove('active');
-        }
-
-        function closeCompletedPopup() {
-            document.getElementById('completed-popup').classList.remove('active');
         }
     </script>
 
